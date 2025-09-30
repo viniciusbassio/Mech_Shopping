@@ -1,0 +1,6 @@
+@MechShopping.ProductAPI_HostAddress = http://localhost:5272
+
+GET {{MechShopping.ProductAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
