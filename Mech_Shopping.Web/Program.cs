@@ -1,3 +1,5 @@
+using Mech_Shopping.Web.Models.IServices;
+
 namespace Mech_Shopping.Web
 {
     public class Program
@@ -9,6 +11,11 @@ namespace Mech_Shopping.Web
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+            
+
+            _ = builder.Services.AddHttpClient<IProductService, ProductService>(
+                c => c.BaseAddress = new Uri(builder.Configuration["ServiceUrls:ProductAPI"]));
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -16,6 +23,8 @@ namespace Mech_Shopping.Web
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+
             app.UseStaticFiles();
 
             app.UseRouting();
