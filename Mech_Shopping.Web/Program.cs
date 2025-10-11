@@ -1,3 +1,5 @@
+using Mech_Shopping.Web.Models.IServices;
+
 namespace Mech_Shopping.Web
 {
     public class Program
@@ -11,11 +13,16 @@ namespace Mech_Shopping.Web
 
             var app = builder.Build();
 
+            _ = builder.Services.AddHttpClient<IProductService, ProductService>(
+                c => c.BaseAddress = new Uri(builder.Configuration["ServiceUrls:ProductAPI"]));
+
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+
             app.UseStaticFiles();
 
             app.UseRouting();
