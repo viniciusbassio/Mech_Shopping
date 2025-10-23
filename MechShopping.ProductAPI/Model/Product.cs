@@ -26,7 +26,7 @@ namespace MechShopping.ProductAPI.Model
         public string? CategoryName { get; set; }
 
         [Column("imagem_url")]
-        [StringLength(300)]
+        [StringLength(1000)]
         public string? ImageURL { get; set; }
 
     }

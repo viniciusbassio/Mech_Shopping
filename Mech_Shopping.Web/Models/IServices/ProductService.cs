@@ -6,7 +6,7 @@ namespace Mech_Shopping.Web.Models.IServices
     {
         private readonly HttpClient client;
         
-        public const string BasePath = "api/v1/products";
+        public const string BasePath = "api/v1/Product";
         public ProductService(HttpClient httpClient)
         {
             client = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
@@ -25,7 +25,16 @@ namespace Mech_Shopping.Web.Models.IServices
         }
         public async Task<ProductModel> CreateProduct(ProductModel productModel)
         {
-            var response = await client.PostAsJson(BasePath, productModel);
+            var response = await client.PostAsJsonAsync($"{BasePath}", productModel);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"❌ Erro da API ao criar produto:");
+                Console.WriteLine($"StatusCode: {response.StatusCode}");
+                Console.WriteLine($"Resposta: {content}");
+            }
+
             if (response.IsSuccessStatusCode)
             {
                 return await response.ReadContentAs<ProductModel>();
@@ -35,6 +44,7 @@ namespace Mech_Shopping.Web.Models.IServices
                 throw new Exception("Something went wrong when calling API");
             }
         }
+
         public async Task<ProductModel> UpdateProduct(ProductModel productModel)
         {
             var response = await client.PutAsJson($"{BasePath}/{productModel.Id}", productModel);
