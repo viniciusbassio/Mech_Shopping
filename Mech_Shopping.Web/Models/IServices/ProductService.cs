@@ -47,20 +47,33 @@ namespace Mech_Shopping.Web.Models.IServices
 
         public async Task<ProductModel> UpdateProduct(ProductModel productModel)
         {
-            var response = await client.PutAsJson($"{BasePath}/{productModel.Id}", productModel);
-            if (response.IsSuccessStatusCode)
+            var response = await client.PutAsJsonAsync($"{BasePath}/{productModel.Id}", productModel);
+
+            if (!response.IsSuccessStatusCode)
             {
-                return await response.ReadContentAs<ProductModel>();
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"❌ Erro da API ao atualizar produto:");
+                Console.WriteLine($"StatusCode: {response.StatusCode}");
+                Console.WriteLine($"Resposta: {content}");
+
+                throw new ApplicationException($"Erro ao atualizar produto: {response.ReasonPhrase}");
             }
-            else
-            {
-                throw new Exception("Something went wrong when calling API");
-            }
+
+            return await response.ReadContentAs<ProductModel>();
         }
 
         public async Task<bool> DeleteProductById(long id)
         {
             var response = await client.DeleteAsync($"{BasePath}/{id}");
+            if (response.IsSuccessStatusCode)
+                {
+                var content = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"❌ Erro da API ao deletar produto:");
+                Console.WriteLine($"StatusCode: {response.StatusCode}");
+                Console.WriteLine($"Resposta: {content}");
+            }
+            else
+                throw new ApplicationException($"Erro ao deletar produto: {response.ReasonPhrase}");
             return response.IsSuccessStatusCode;
         }
 
