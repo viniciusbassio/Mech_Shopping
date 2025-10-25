@@ -12,7 +12,7 @@ namespace MechShopping.ProductAPI.Controllers
         private IProductRepository _repository;
         public ProductController(IProductRepository repository)
         {
-            _repository = repository ?? throw new 
+            _repository = repository ?? throw new
                 ArgumentNullException(nameof(repository));
         }
 
@@ -26,19 +26,19 @@ namespace MechShopping.ProductAPI.Controllers
         public async Task<ActionResult<ProductVO>> FindById(long id)
         {
             var product = await _repository.FindById(id);
-            if (product.Id <=0 ) return NotFound();
+            if (product.Id <= 0) return NotFound();
             return Ok(product);
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProductVO>> Create([FromBody]ProductVO vo)
+        public async Task<ActionResult<ProductVO>> Create([FromBody] ProductVO vo)
         {
             if (vo == null) return BadRequest();
             var product = await _repository.Create(vo);
             return Ok(product);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<ActionResult<ProductVO>> Update([FromBody]ProductVO vo)
         {
             if (vo == null) return BadRequest();
