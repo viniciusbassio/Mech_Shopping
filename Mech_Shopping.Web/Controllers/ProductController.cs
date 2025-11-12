@@ -1,5 +1,7 @@
 ﻿using Mech_Shopping.Web.Models;
 using Mech_Shopping.Web.Models.IServices;
+using Mech_Shopping.Web.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mech_Shopping.Web.Controllers
@@ -12,6 +14,7 @@ namespace Mech_Shopping.Web.Controllers
         {
             _productService = productService ?? throw new ArgumentNullException(nameof(productService));
         }
+        [Authorize]
         public async Task<IActionResult> ProductIndex()
         {
             var products = await _productService.FindAllProducts();
@@ -23,6 +26,7 @@ namespace Mech_Shopping.Web.Controllers
             return View();
         }
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> ProductCreate(ProductModel model)
         {
             if (ModelState.IsValid)
@@ -40,6 +44,7 @@ namespace Mech_Shopping.Web.Controllers
             return NotFound();
         }
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> ProductUpdate(ProductModel model)
         {
             if (ModelState.IsValid)
@@ -49,6 +54,7 @@ namespace Mech_Shopping.Web.Controllers
             }
             return View(model);
         }
+        [Authorize]
         public async Task<IActionResult> ProductDelete(int id)
         {
 
@@ -58,6 +64,7 @@ namespace Mech_Shopping.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles =Role.Admin)]
         public async Task<IActionResult> ProductDelete(ProductModel model)
         {
                 var response = await _productService.DeleteProductById(model.Id);
