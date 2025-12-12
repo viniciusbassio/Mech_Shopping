@@ -64,7 +64,7 @@ namespace Mech_Shopping.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles =Role.Admin)]
+        [Authorize(Roles = Role.Admin)]
         public async Task<IActionResult> ProductDelete(ProductModel model)
         {
                 var response = await _productService.DeleteProductById(model.Id);
