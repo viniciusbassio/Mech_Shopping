@@ -8,7 +8,7 @@ namespace Mech_Shopping.IdentityServer.Configuration
         public const string Admin = "Admin";
         public const string Client = "Client";
 
-        // Identity resources (OpenID Connect standard)
+        // Identity resources
         public static IEnumerable<IdentityResource> IdentityResources =>
             new List<IdentityResource>
             {
@@ -29,30 +29,49 @@ namespace Mech_Shopping.IdentityServer.Configuration
         // Clients
         public static IEnumerable<Client> Clients => new List<Client>
         {
-            // Machine-to-machine client
+            // Machine to Machine
             new Client
             {
                 ClientId = "client",
                 ClientSecrets = { new Secret("my_super_secret".Sha256()) },
                 AllowedGrantTypes = GrantTypes.ClientCredentials,
-                AllowedScopes = { "read", "write" } // apenas escopos necessários
+                AllowedScopes = { "read", "write" }
             },
 
-            // OIDC client with PKCE + refresh tokens
+            // OIDC Client
             new Client
             {
                 ClientId = "mech_shopping",
                 ClientSecrets = { new Secret("my_super_secret".Sha256()) },
 
-                AllowedGrantTypes = GrantTypes.Code, // Authorization Code
-                RequirePkce = true,                  // PKCE obrigatório
-                RequireClientSecret = true,          // para segurança
-                AllowOfflineAccess = true,           // habilita refresh token
+                AllowedGrantTypes = GrantTypes.Code,
+                RequirePkce = true,
+                RequireClientSecret = true,
 
-                RedirectUris = { "https://localhost:4430/signin-oidc" },
-                PostLogoutRedirectUris = { "https://localhost:4430/signout-callback-oidc" },
+                AllowOfflineAccess = true, // habilita refresh token
 
-                AllowedScopes = new List<string>
+                RedirectUris =
+                {
+                    "https://localhost:4430/signin-oidc"
+                },
+                PostLogoutRedirectUris =
+                {
+                    "https://localhost:4430/signout-callback-oidc"
+                },
+
+                // ❗ Se estiver usando MVC, isso é importante:
+                FrontChannelLogoutUri = "https://localhost:4430/signout-oidc",
+
+                // Permitir tokens via navegador (caso use SPA ou MVC)
+                AllowAccessTokensViaBrowser = true,
+
+                // IMPORTANTE: senão o IdentityServer bloqueia a volta para o client
+                AllowedCorsOrigins =
+                {
+                    "https://localhost:4430"
+                },
+
+                AllowedScopes =
                 {
                     IdentityServerConstants.StandardScopes.OpenId,
                     IdentityServerConstants.StandardScopes.Profile,
@@ -60,11 +79,19 @@ namespace Mech_Shopping.IdentityServer.Configuration
                     "mech_shopping"
                 },
 
-                // Opcional: limita o tempo de vida do token de refresh
                 RefreshTokenExpiration = TokenExpiration.Absolute,
-                AbsoluteRefreshTokenLifetime = 2592000, // 30 dias em segundos
-                RefreshTokenUsage = TokenUsage.OneTimeOnly, // refresh token único por uso
-            }
+                AbsoluteRefreshTokenLifetime = 2592000, // 30 dias
+                RefreshTokenUsage = TokenUsage.OneTimeOnly
+            },
+
+            // Postman
+            new Client
+{
+    ClientId = "postman_client",
+    ClientSecrets = { new Secret("postman_secret".Sha256()) },
+    AllowedGrantTypes = GrantTypes.ClientCredentials,
+    AllowedScopes = { "read", "write", "mech_shopping" }
+}
         };
     }
 }

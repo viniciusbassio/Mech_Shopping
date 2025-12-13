@@ -28,17 +28,36 @@ namespace Mech_Shopping.Web.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            });
         }
+
+        // Mantido conforme pedido — apenas corrigido e tornado útil
         [Authorize]
         public async Task<IActionResult> Login()
         {
-            var acesstoken = await HttpContext.GetTokenAsync("acess_token");
+            // Recupera o access token
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+
+            // Aqui você pode logar, debugar ou validar o token se quiser
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                _logger.LogWarning("Token não encontrado ou expirado no método Login().");
+            }
+
+            // Após autenticação, volta para a página inicial
             return RedirectToAction(nameof(Index));
         }
+
         public IActionResult Logout()
         {
-            return SignOut("Cookies", "oidc");
+            return SignOut(
+                new AuthenticationProperties { RedirectUri = "/" },
+                "Cookies",
+                "oidc"
+            );
         }
     }
 }

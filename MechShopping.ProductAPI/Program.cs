@@ -16,7 +16,7 @@ namespace MechShopping.ProductAPI
             var connection = builder.Configuration.GetConnectionString("SqlServerConnection");
 
             // AutoMapper
-            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
 
             // Repositórios
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -35,8 +35,9 @@ namespace MechShopping.ProductAPI
                     options.Authority = "https://localhost:4435/";
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateAudience = true,
-                        ValidAudience = "mech_shopping"
+                        ValidateAudience = false
+                        //ValidateAudience = true,
+                        //ValidAudience = "mech_shopping"
                     };
                 });
 
@@ -87,22 +88,21 @@ namespace MechShopping.ProductAPI
 
             var app = builder.Build();
 
-            // HTTPS antes de tudo
-            app.UseHttpsRedirection();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            // Swagger apenas em dev e em rota específica
+            // Swagger antes de tudo
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProductAPI v1");
-                    c.RoutePrefix = "swagger/product"; // acessível via https://localhost:4430/swagger/product
+                    c.RoutePrefix = "swagger";
                 });
             }
+
+            app.UseHttpsRedirection();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.MapControllers();
 
