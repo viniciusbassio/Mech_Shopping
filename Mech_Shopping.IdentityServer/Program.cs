@@ -1,6 +1,8 @@
+using Duende.IdentityServer.Services;
 using Mech_Shopping.IdentityServer.Configuration;
 using Mech_Shopping.IdentityServer.Initializer;
 using Mech_Shopping.IdentityServer.Model.Context;
+using Mech_Shopping.IdentityServer.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,6 +40,7 @@ namespace Mech_Shopping.IdentityServer
             .AddAspNetIdentity<ApplicationUser>()
             .AddDeveloperSigningCredential();
             builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+            builder.Services.AddScoped<IProfileService, ProfileService> ();
 
             var app = builder.Build();
 
